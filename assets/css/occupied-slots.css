@@ -1,0 +1,287 @@
+/**
+ * Timetics Occupied Slots Addon - Frontend Styles
+ * 
+ * Styles for displaying occupied slots from Google Calendar
+ */
+
+/* Occupied slot styling - Enhanced for React compatibility */
+.tt-slot-list .ant-list-item .ant-btn.tt-slot-occupied,
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied,
+.ant-btn.tt-slot-occupied,
+.ant-btn-block.tt-slot-occupied {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    border-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
+    position: relative;
+    pointer-events: none !important; /* Prevent React event handlers */
+}
+
+.tt-slot-list .ant-list-item .ant-btn.tt-slot-occupied:hover,
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied:hover,
+.ant-btn.tt-slot-occupied:hover,
+.ant-btn-block.tt-slot-occupied:hover {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    border-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Override Ant Design button styles for occupied slots */
+.ant-btn.tt-slot-occupied.ant-btn-primary.ant-btn-background-ghost {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    border-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+}
+
+.ant-btn.tt-slot-occupied.ant-btn-primary.ant-btn-background-ghost:hover {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    border-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+}
+
+/* Occupied slot icon - Enhanced for React compatibility */
+.tt-slot-list .ant-list-item .ant-btn.tt-slot-occupied::before,
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied::before,
+.ant-btn.tt-slot-occupied::before,
+.ant-btn-block.tt-slot-occupied::before {
+    content: "🚫";
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+/* React-specific occupied slot styling */
+[data-occupied="true"] {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    border-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
+    pointer-events: none !important;
+}
+
+[data-occupied="true"]::before {
+    content: "🚫";
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+/* Alternative icon using CSS */
+.tt-slot-list .ant-list-item .ant-btn.tt-slot-occupied.tt-slot-occupied-no-emoji::before,
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied.tt-slot-occupied-no-emoji::before {
+    content: "✕";
+    margin-right: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Icon positioning for Ant Design buttons */
+.ant-btn.tt-slot-occupied span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tooltip styling */
+.tt-occupied-slot-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tt-occupied-slot-tooltip .tt-tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.tt-occupied-slot-tooltip .tt-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tt-occupied-slot-tooltip:hover .tt-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Occupied slot label */
+.tt-slot-occupied-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    opacity: 0.9;
+}
+
+/* Different occupied slot types */
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied-google {
+    background-color: var(--tt-occupied-google-color, #ff6b6b) !important;
+}
+
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied-internal {
+    background-color: var(--tt-occupied-internal-color, #ffa500) !important;
+}
+
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied-capacity {
+    background-color: var(--tt-occupied-capacity-color, #ff4757) !important;
+}
+
+/* Animation for occupied slots */
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied {
+    animation: tt-occupied-pulse 2s infinite;
+}
+
+@keyframes tt-occupied-pulse {
+    0% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0.8;
+    }
+}
+
+/* Disable animation if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied {
+        animation: none;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tt-occupied-slot-tooltip .tt-tooltip-text {
+        width: 150px;
+        margin-left: -75px;
+        font-size: 11px;
+    }
+    
+    .tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied::before {
+        font-size: 10px;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied {
+        border: 2px solid #000 !important;
+        background-color: #ff0000 !important;
+        color: #ffffff !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .tt-occupied-slot-tooltip .tt-tooltip-text {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        border: 1px solid #333;
+    }
+    
+    .tt-occupied-slot-tooltip .tt-tooltip-text::after {
+        border-color: #1a1a1a transparent transparent transparent;
+    }
+}
+
+/* Focus styles for accessibility */
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied:focus {
+    outline: 2px solid #ff6b6b;
+    outline-offset: 2px;
+}
+
+/* Screen reader only text */
+.tt-slot-occupied-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Loading state for occupied slots */
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid #ccc;
+    border-top-color: #666;
+    border-radius: 50%;
+    animation: tt-slot-spin 1s linear infinite;
+}
+
+@keyframes tt-slot-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error state for occupied slots */
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-error {
+    background-color: #ff4757 !important;
+    color: #ffffff !important;
+    border-color: #ff4757 !important;
+}
+
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-error::before {
+    content: "⚠";
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+/* Custom CSS variables for easy theming */
+:root {
+    --tt-occupied-slot-color: #ff6b6b;
+    --tt-occupied-slot-text-color: #ffffff;
+    --tt-occupied-google-color: #ff6b6b;
+    --tt-occupied-internal-color: #ffa500;
+    --tt-occupied-capacity-color: #ff4757;
+    --tt-occupied-slot-border-radius: 4px;
+    --tt-occupied-slot-font-weight: 600;
+    --tt-occupied-slot-transition: all 0.2s ease;
+}
+
+/* Override CSS variables if set in admin */
+.tt-slot-list .ant-list-item .ant-btn-block.tt-slot-occupied {
+    background-color: var(--tt-occupied-slot-color) !important;
+    color: var(--tt-occupied-slot-text-color) !important;
+    border-radius: var(--tt-occupied-slot-border-radius);
+    font-weight: var(--tt-occupied-slot-font-weight);
+    transition: var(--tt-occupied-slot-transition);
+}

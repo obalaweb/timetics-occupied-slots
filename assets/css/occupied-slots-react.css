@@ -1,0 +1,451 @@
+/**
+ * Timetics Occupied Slots - React Integration Styles
+ * 
+ * Styles for blocked dates in React components
+ */
+
+/* Blocked date base styles */
+.timetics-date-blocked {
+    background-color: transparent !important;
+    color: #666666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+    position: relative;
+}
+
+/* Blocked date hover effects - removed */
+.timetics-date-blocked:hover {
+    background-color: transparent !important;
+    opacity: 0.5 !important;
+}
+
+/* Blocked date icon */
+.timetics-date-blocked .blocked-icon {
+    margin-left: 4px;
+    font-size: 12px;
+    opacity: 1;
+}
+
+/* Tooltip for blocked dates */
+.timetics-date-blocked::after {
+    content: "This date is fully occupied";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.timetics-date-blocked:hover::after {
+    opacity: 1;
+}
+
+/* Calendar-specific styles */
+[class*="calendar"] .timetics-date-blocked {
+    border: 2px solid #666666 !important;
+    border-radius: 4px;
+}
+
+[class*="picker"] .timetics-date-blocked {
+    background: linear-gradient(135deg, #666666, #555555) !important;
+    border-radius: 6px;
+}
+
+/* Date picker cell styles */
+[class*="ant-picker-cell"] .timetics-date-blocked {
+    background-color: #666666 !important;
+    color: #ffffff !important;
+    border-radius: 4px;
+}
+
+[class*="ant-picker-cell"] .timetics-date-blocked:hover {
+    background-color: #555555 !important;
+}
+
+/* Booking form styles */
+[class*="booking"] .timetics-date-blocked,
+[class*="appointment"] .timetics-date-blocked {
+    background-color: #666666 !important;
+    color: #ffffff !important;
+    border: 2px solid #555555 !important;
+    border-radius: 6px;
+}
+
+/* React component specific overrides */
+.timetics-calendar .timetics-date-blocked {
+    background-color: #666666 !important;
+    color: #ffffff !important;
+    border: 2px solid #555555 !important;
+}
+
+.timetics-booking-form .timetics-date-blocked {
+    background-color: #666666 !important;
+    color: #ffffff !important;
+    border: 2px solid #555555 !important;
+}
+
+/* Animation for blocked dates */
+@keyframes blocked-date-pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0.7; }
+}
+
+.timetics-date-blocked {
+    animation: blocked-date-pulse 2s infinite;
+}
+
+/* Disable animation for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .timetics-date-blocked {
+        animation: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .timetics-date-blocked {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 3px solid #ffffff !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .timetics-date-blocked {
+        background-color: #ff4444 !important;
+        color: #ffffff !important;
+    }
+    
+    .timetics-date-blocked::after {
+        background: #000000;
+        color: #ffffff;
+        border: 1px solid #ffffff;
+    }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    .timetics-date-blocked .blocked-icon {
+        font-size: 14px;
+        margin-left: 2px;
+    }
+    
+    .timetics-date-blocked::after {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}
+
+/* Accessibility improvements */
+.timetics-date-blocked[aria-disabled="true"] {
+    background-color: #ff6b6b !important;
+    color: #ffffff !important;
+}
+
+.timetics-date-blocked:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Screen reader support */
+.timetics-date-blocked::before {
+    content: "Blocked date: ";
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Disabled Dates */
+.timetics-date-disabled {
+    background-color: #f5f5f5 !important;
+    color: #999999 !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+    text-decoration: line-through !important;
+    position: relative;
+}
+
+.timetics-date-disabled:hover {
+    background-color: #e0e0e0 !important;
+    opacity: 0.6 !important;
+}
+
+.timetics-date-disabled .disabled-icon {
+    margin-left: 4px;
+    font-size: 12px;
+    opacity: 1;
+}
+
+/* Tooltip for disabled dates */
+.timetics-date-disabled::after {
+    content: "This date is not available";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.timetics-date-disabled:hover::after {
+    opacity: 1;
+}
+
+/* Calendar-specific disabled date styles */
+[class*="calendar"] .timetics-date-disabled {
+    border: 1px solid #ddd !important;
+    border-radius: 4px;
+}
+
+[class*="picker"] .timetics-date-disabled {
+    background: linear-gradient(135deg, #f5f5f5, #e0e0e0) !important;
+    border-radius: 6px;
+}
+
+/* Date picker cell disabled styles */
+[class*="ant-picker-cell"] .timetics-date-disabled {
+    background-color: #f5f5f5 !important;
+    color: #999999 !important;
+    border-radius: 4px;
+}
+
+[class*="ant-picker-cell"] .timetics-date-disabled:hover {
+    background-color: #e0e0e0 !important;
+}
+
+/* Booking form disabled styles */
+[class*="booking"] .timetics-date-disabled,
+[class*="appointment"] .timetics-date-disabled {
+    background-color: #f5f5f5 !important;
+    color: #999999 !important;
+    border: 1px solid #ddd !important;
+    border-radius: 6px;
+}
+
+/* React component specific disabled overrides */
+.timetics-calendar .timetics-date-disabled {
+    background-color: #f5f5f5 !important;
+    color: #999999 !important;
+    border: 1px solid #ddd !important;
+}
+
+.timetics-booking-form .timetics-date-disabled {
+    background-color: #f5f5f5 !important;
+    color: #999999 !important;
+    border: 1px solid #ddd !important;
+}
+
+/* Animation for disabled dates */
+@keyframes disabled-date-pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0.5; }
+}
+
+.timetics-date-disabled {
+    animation: disabled-date-pulse 3s infinite;
+}
+
+/* Disable animation for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .timetics-date-disabled {
+        animation: none;
+    }
+}
+
+/* High contrast mode support for disabled dates */
+@media (prefers-contrast: high) {
+    .timetics-date-disabled {
+        background-color: #cccccc !important;
+        color: #666666 !important;
+        border: 2px solid #999999 !important;
+    }
+}
+
+/* Dark mode support for disabled dates */
+@media (prefers-color-scheme: dark) {
+    .timetics-date-disabled {
+        background-color: #2a2a2a !important;
+        color: #666666 !important;
+    }
+    
+    .timetics-date-disabled::after {
+        background: #000000;
+        color: #ffffff;
+        border: 1px solid #ffffff;
+    }
+}
+
+/* Mobile responsive styles for disabled dates */
+@media (max-width: 768px) {
+    .timetics-date-disabled .disabled-icon {
+        font-size: 14px;
+        margin-left: 2px;
+    }
+    
+    .timetics-date-disabled::after {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+}
+
+/* Accessibility improvements for disabled dates */
+.timetics-date-disabled[aria-disabled="true"] {
+    background-color: #f5f5f5 !important;
+    color: #999999 !important;
+}
+
+.timetics-date-disabled:focus {
+    outline: 2px solid #999999;
+    outline-offset: 2px;
+}
+
+/* Screen reader support for disabled dates */
+.timetics-date-disabled::before {
+    content: "Disabled date: ";
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Next Available Date Button */
+.timetics-next-available-btn {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    padding: 0;
+    margin: 10px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Next available button hover effects - removed */
+.timetics-next-available-btn:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: none;
+}
+
+.timetics-next-available-btn h3 {
+    color: #2c3e50 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin: 0 0 8px 0 !important;
+}
+
+.timetics-next-available-btn p {
+    color: #7f8c8d !important;
+    font-size: 14px !important;
+    margin: 0 0 16px 0 !important;
+}
+
+.timetics-next-available-btn button {
+    background: #78AEFF !important;
+    color: white !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    width: 100% !important;
+}
+
+/* Next available button inner hover effects - removed */
+.timetics-next-available-btn button:hover {
+    background: #78AEFF !important;
+    transform: none;
+}
+
+/* Remove red background on hover for blocked dates */
+.timetics-date-blocked:hover {
+    background-color: #ff6b6b !important;
+    opacity: 0.8 !important;
+}
+
+.timetics-next-available-btn svg {
+    color: #78AEFF !important;
+    margin-bottom: 10px;
+}
+
+/* Animation for the button */
+@keyframes next-available-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.timetics-next-available-btn {
+    animation: next-available-pulse 2s infinite;
+}
+
+/* Disable animation for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .timetics-next-available-btn {
+        animation: none;
+    }
+}
+
+/* Mobile responsive styles for next available button */
+@media (max-width: 768px) {
+    .timetics-next-available-btn {
+        margin: 5px 0;
+    }
+    
+    .timetics-next-available-btn h3 {
+        font-size: 14px !important;
+    }
+    
+    .timetics-next-available-btn p {
+        font-size: 12px !important;
+    }
+    
+    .timetics-next-available-btn button {
+        padding: 10px 20px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .timetics-date-blocked {
+        background-color: #cccccc !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+    }
+    
+    .timetics-date-blocked::after {
+        display: none;
+    }
+    
+    .timetics-next-available-btn {
+        display: none;
+    }
+}

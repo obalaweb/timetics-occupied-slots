@@ -1,0 +1,308 @@
+/**
+ * Timetics Occupied Slots Addon - Enhanced CSS
+ * 
+ * Lightweight enhancements for better slot display and styling
+ */
+
+/* Enhanced occupied slot styling */
+.tt-slot-occupied {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+    position: relative !important;
+}
+
+.tt-slot-occupied:hover {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    opacity: 0.8 !important;
+    transform: none !important;
+}
+
+/* Enhanced tooltip styling */
+.tt-occupied-slot-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tt-tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.tt-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.tt-occupied-slot-tooltip:hover .tt-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Enhanced accessibility features */
+.tt-slot-occupied-sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.tt-slot-focused {
+    outline: 2px solid #007cba !important;
+    outline-offset: 2px !important;
+}
+
+/* Enhanced slot processing indicators */
+.tt-slot-processed {
+    /* Indicator that slot has been processed */
+}
+
+/* Enhanced message styling */
+.tt-occupied-slot-message {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    background: #ff6b6b !important;
+    color: white !important;
+    padding: 12px 20px !important;
+    border-radius: 4px !important;
+    z-index: 9999 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    max-width: 300px !important;
+    word-wrap: break-word !important;
+}
+
+/* Enhanced slot container styling */
+.tt-slot-list .ant-btn.tt-slot-occupied,
+.ant-list .ant-btn.tt-slot-occupied,
+.slot-container .ant-btn.tt-slot-occupied {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    border-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+}
+
+/* Enhanced React compatibility */
+[data-occupied="true"] {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+}
+
+/* Enhanced slot detection improvements */
+.ant-btn[data-status="occupied"],
+.ant-btn[data-status="unavailable"],
+.ant-btn[data-is-occupied="true"] {
+    background-color: var(--tt-occupied-slot-color, #ff6b6b) !important;
+    color: var(--tt-occupied-slot-text-color, #ffffff) !important;
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+}
+
+/* Enhanced debugging styles */
+.tt-occupied-slot-debug {
+    border: 2px dashed #ff6b6b !important;
+    background-color: rgba(255, 107, 107, 0.1) !important;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+    .tt-occupied-slot-message {
+        top: 10px !important;
+        right: 10px !important;
+        left: 10px !important;
+        max-width: none !important;
+    }
+    
+    .tt-tooltip-text {
+        width: 150px !important;
+        margin-left: -75px !important;
+    }
+}
+
+/* Enhanced animation for better UX */
+.tt-slot-occupied {
+    transition: all 0.2s ease-in-out !important;
+}
+
+.tt-slot-occupied:hover {
+    transform: scale(1.02) !important;
+}
+
+/* Enhanced focus states for accessibility */
+.tt-slot-occupied:focus {
+    outline: 2px solid #007cba !important;
+    outline-offset: 2px !important;
+}
+
+/* Enhanced slot availability indicators */
+.tt-slot-available {
+    background-color: var(--tt-available-slot-color, #52c41a) !important;
+    color: var(--tt-available-slot-text-color, #ffffff) !important;
+}
+
+/* Enhanced slot processing states */
+.tt-slot-processing {
+    opacity: 0.5 !important;
+    pointer-events: none !important;
+}
+
+/* Enhanced error states */
+.tt-slot-error {
+    background-color: #ff4d4f !important;
+    color: #ffffff !important;
+    border-color: #ff4d4f !important;
+}
+
+/* Enhanced loading states */
+.tt-slot-loading {
+    background-color: #f0f0f0 !important;
+    color: #999999 !important;
+    cursor: wait !important;
+}
+
+/* Enhanced slot grouping */
+.tt-slot-group {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+.tt-slot-group .ant-btn {
+    flex: 1 !important;
+    min-width: 120px !important;
+}
+
+/* Enhanced slot status indicators */
+.tt-slot-status-indicator {
+    position: absolute !important;
+    top: 4px !important;
+    right: 4px !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background-color: currentColor !important;
+}
+
+.tt-slot-occupied .tt-slot-status-indicator {
+    background-color: #ff4d4f !important;
+}
+
+.tt-slot-available .tt-slot-status-indicator {
+    background-color: #52c41a !important;
+}
+
+/* Enhanced slot text styling */
+.tt-slot-occupied .ant-btn-text,
+.tt-slot-occupied .slot-text {
+    text-decoration: line-through !important;
+    opacity: 0.8 !important;
+}
+
+/* Enhanced slot icon styling */
+.tt-slot-occupied::before {
+    content: "🚫" !important;
+    margin-right: 4px !important;
+    font-size: 12px !important;
+}
+
+.tt-slot-available::before {
+    content: "✅" !important;
+    margin-right: 4px !important;
+    font-size: 12px !important;
+}
+
+/* Enhanced slot hover effects */
+.tt-slot-occupied:hover::after {
+    content: " (Occupied)" !important;
+    font-size: 10px !important;
+    opacity: 0.8 !important;
+}
+
+/* Enhanced slot click prevention */
+.tt-slot-occupied * {
+    pointer-events: none !important;
+}
+
+/* Enhanced slot container improvements */
+.tt-slot-list,
+.ant-list,
+.slot-container {
+    position: relative !important;
+}
+
+.tt-slot-list::before,
+.ant-list::before,
+.slot-container::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+/* Enhanced slot loading animation */
+@keyframes tt-slot-loading {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.tt-slot-loading {
+    animation: tt-slot-loading 1.5s infinite !important;
+}
+
+/* Enhanced slot error animation */
+@keyframes tt-slot-error {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.tt-slot-error {
+    animation: tt-slot-error 0.3s ease-in-out !important;
+}
+
+/* Enhanced slot success animation */
+@keyframes tt-slot-success {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.tt-slot-available {
+    animation: tt-slot-success 0.2s ease-in-out !important;
+}

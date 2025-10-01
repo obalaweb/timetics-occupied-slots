@@ -1,0 +1,258 @@
+/**
+ * Timetics Occupied Slots Addon - Next Available Day Button Styles
+ * 
+ * Enhanced styling for the "Next Available Day" functionality
+ */
+
+/* Next Available Day Button Container */
+.timetics-next-available-btn {
+    margin: 20px 0;
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.timetics-next-available-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+/* Next available button hover effects - removed */
+.timetics-next-available-btn:hover::before {
+    left: 0;
+}
+
+.timetics-next-available-btn:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #e1e8ed;
+}
+
+/* Next Available Day Button Inner */
+.timetics-next-available-btn-inner {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Next available button inner hover effects - removed */
+.timetics-next-available-btn-inner:hover {
+    background: transparent;
+    transform: none;
+}
+
+.timetics-next-available-btn-inner:active {
+    transform: scale(0.98);
+}
+
+/* Next Available Day Icon */
+.timetics-next-available-icon {
+    font-size: 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Next Available Day Text */
+.timetics-next-available-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* Loading State */
+.timetics-next-available-loading {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+}
+
+.timetics-next-available-loading::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success Message */
+.timetics-next-available-success {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.timetics-success-icon {
+    font-size: 18px;
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .timetics-next-available-btn {
+        margin: 15px 0;
+        padding: 12px;
+    }
+    
+    .timetics-next-available-btn-inner {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+    
+    .timetics-next-available-icon {
+        font-size: 18px;
+    }
+    
+    .timetics-next-available-success {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .timetics-next-available-btn {
+        margin: 10px 0;
+        padding: 10px;
+    }
+    
+    .timetics-next-available-btn-inner {
+        font-size: 13px;
+        padding: 8px 16px;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .timetics-next-available-text {
+        font-size: 13px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .timetics-next-available-btn {
+        background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
+    }
+    
+    /* Next available button hover effects - removed */
+    .timetics-next-available-btn:hover {
+        box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .timetics-next-available-btn {
+        border: 3px solid #000000;
+        background: #ffffff;
+        color: #000000;
+    }
+    
+    .timetics-next-available-btn-inner {
+        color: #000000;
+        font-weight: 700;
+    }
+    
+    /* Next available button inner hover effects - removed */
+    .timetics-next-available-btn-inner:hover {
+        background: transparent;
+        color: #000000;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .timetics-next-available-btn,
+    .timetics-next-available-btn-inner,
+    .timetics-next-available-icon,
+    .timetics-next-available-loading::before,
+    .timetics-next-available-success,
+    .timetics-success-icon {
+        animation: none;
+        transition: none;
+    }
+    
+    .timetics-next-available-btn:hover {
+        transform: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .timetics-next-available-btn,
+    .timetics-next-available-success {
+        display: none !important;
+    }
+}
