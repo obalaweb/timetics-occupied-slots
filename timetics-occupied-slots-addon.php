@@ -36,6 +36,15 @@ require_once plugin_dir_path(__FILE__) . 'includes/class-occupied-slots-google-c
 require_once plugin_dir_path(__FILE__) . 'includes/class-occupied-slots-simple-blocker.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-occupied-slots-frontend-react.php';
 
+// Include the Smart Cache Manager
+require_once plugin_dir_path(__FILE__) . 'includes/class-smart-cache-manager.php';
+
+// Include the Hybrid Blocked Dates Manager
+require_once plugin_dir_path(__FILE__) . 'includes/class-hybrid-blocked-dates-manager.php';
+
+// Include the Google Calendar Webhook Handler
+require_once plugin_dir_path(__FILE__) . 'includes/class-google-calendar-webhook-handler.php';
+
 // Performance optimization classes
 require_once plugin_dir_path(__FILE__) . 'includes/class-occupied-slots-cache-optimized.php';
 require_once plugin_dir_path(__FILE__) . 'includes/class-occupied-slots-asset-optimizer.php';
@@ -334,6 +343,38 @@ add_action('plugins_loaded', function () {
 
 // Register REST API routes with unique namespace to avoid conflicts
 add_action('rest_api_init', function () {
+    // Register accuracy report endpoint
+    register_rest_route('timetics-occupied-slots/v1', '/accuracy-report', [
+        'methods' => 'GET',
+        'callback' => function($request) {
+            $start_date = $request->get_param('start_date') ?: date('Y-m-d');
+            $end_date = $request->get_param('end_date') ?: date('Y-m-d', strtotime('+30 days'));
+            
+            if (class_exists('Hybrid_Blocked_Dates_Manager')) {
+                $hybrid_manager = Hybrid_Blocked_Dates_Manager::get_instance();
+                return $hybrid_manager->get_accuracy_report($start_date, $end_date);
+            }
+            
+            return [
+                'error' => 'Hybrid_Blocked_Dates_Manager not available',
+                'fallback' => 'Using simple blocker'
+            ];
+        },
+        'permission_callback' => '__return_true',
+        'args' => [
+            'start_date' => [
+                'type' => 'string',
+                'format' => 'date',
+                'default' => date('Y-m-d')
+            ],
+            'end_date' => [
+                'type' => 'string',
+                'format' => 'date',
+                'default' => date('Y-m-d', strtotime('+30 days'))
+            ]
+        ]
+    ]);
+
     // Register occupied dates endpoint with unique namespace
     register_rest_route('timetics-occupied-slots/v1', '/occupied-dates', [
         'methods' => 'GET',
@@ -341,9 +382,16 @@ add_action('rest_api_init', function () {
             $start_date = $request->get_param('start_date') ?: date('Y-m-d');
             $end_date = $request->get_param('end_date') ?: date('Y-m-d', strtotime('+30 days'));
             
-            // Get blocked dates from the simple blocker
+            // Get blocked dates using hybrid approach for 100% accuracy
             $blocked_dates = [];
-            if (class_exists('OccupiedSlotsSimpleBlocker')) {
+            
+            // Try hybrid manager first (recommended)
+            if (class_exists('Hybrid_Blocked_Dates_Manager')) {
+                $hybrid_manager = Hybrid_Blocked_Dates_Manager::get_instance();
+                $blocked_dates = $hybrid_manager->get_blocked_dates($start_date, $end_date);
+            } 
+            // Fallback to simple blocker
+            elseif (class_exists('OccupiedSlotsSimpleBlocker')) {
                 $blocker = OccupiedSlotsSimpleBlocker::get_instance();
                 $all_blocked_dates = $blocker->get_blocked_dates();
                 

@@ -157,7 +157,7 @@ class OccupiedSlotsSimpleBlocker
         // Query Timetics bookings using WordPress post type
         $bookings = get_posts([
             'post_type' => 'timetics-booking',
-            'post_status' => 'publish',
+            'post_status' => ['publish', 'completed', 'pending'],
             'meta_query' => [
                 [
                     'key' => '_tt_booking_start_date',
@@ -204,6 +204,14 @@ class OccupiedSlotsSimpleBlocker
             return [];
         }
 
+        // Use caching to avoid repeated API calls
+        $cache_key = 'timetics_google_calendar_blocked_dates_' . date('Y-m-d');
+        $cached_dates = get_transient($cache_key);
+        
+        if ($cached_dates !== false) {
+            return $cached_dates;
+        }
+
         // Use existing Google Calendar integration
         if (class_exists('Timetics\Core\Integrations\Google\Service\Google_Calendar_Sync')) {
             try {
@@ -212,17 +220,40 @@ class OccupiedSlotsSimpleBlocker
                 $start_date = date('Y-m-d');
                 $end_date = date('Y-m-d', strtotime('+30 days'));
                 
-                // Get Google Calendar events - use the existing method
-                $events = $google_sync->get_events_from_google([]);
+                // Get Google Calendar events directly from Calendar class
+                $calendar = new \Timetics\Core\Integrations\Google\Service\Calendar();
+                $events = $calendar->get_events(get_current_user_id(), [
+                    'timeMin' => rawurlencode(date('c', strtotime($start_date))),
+                    'timeMax' => rawurlencode(date('c', strtotime($end_date))),
+                ]);
+                
+                if (is_wp_error($events) || empty($events)) {
+                    return [];
+                }
                 
                 $blocked_dates = [];
+                $dates_with_events = [];
                 
+                // Group events by date
                 foreach ($events as $event) {
-                    $event_date = $this->extract_date_from_event($event);
-                    if ($event_date && $this->is_date_fully_occupied_by_google($event_date, $events)) {
-                        $blocked_dates[] = $event_date;
+                    $event_date = $event['start_date'] ?? null;
+                    if ($event_date) {
+                        if (!isset($dates_with_events[$event_date])) {
+                            $dates_with_events[$event_date] = 0;
+                        }
+                        $dates_with_events[$event_date]++;
                     }
                 }
+                
+                // Check which dates are fully occupied by Google events
+                foreach ($dates_with_events as $date => $event_count) {
+                    if ($this->is_date_fully_occupied_by_google_events($date, $event_count)) {
+                        $blocked_dates[] = $date;
+                    }
+                }
+                
+                // Cache for 15 minutes to reduce API calls
+                set_transient($cache_key, $blocked_dates, 15 * MINUTE_IN_SECONDS);
                 
                 return $blocked_dates;
                 
@@ -244,7 +275,7 @@ class OccupiedSlotsSimpleBlocker
         // Get all bookings for this date using Timetics post type
         $bookings = get_posts([
             'post_type' => 'timetics-booking',
-            'post_status' => 'publish',
+            'post_status' => ['publish', 'completed', 'pending'],
             'meta_query' => [
                 [
                     'key' => '_tt_booking_start_date',
@@ -258,9 +289,27 @@ class OccupiedSlotsSimpleBlocker
 
         $booking_count = count($bookings);
         
-        // For now, if there are any bookings, consider the date occupied
-        // This can be enhanced later to check if all available slots are taken
-        return $booking_count > 0;
+        // Get business hours and slot configuration from Timetics settings
+        $timetics_settings = get_option('timetics_settings', []);
+        $availability = $timetics_settings['availability'] ?? [];
+        $slot_interval = $timetics_settings['slot_interval'] ?? 1;
+        
+        // Get the day of the week for this date
+        $day_of_week = date('D', strtotime($date));
+        
+        // Check if this day is available (not a day off)
+        if (!isset($availability[$day_of_week]) || empty($availability[$day_of_week])) {
+            return true; // Day is not available, so it's "fully occupied"
+        }
+        
+        // Calculate total available slots for this day
+        $day_availability = $availability[$day_of_week][0];
+        $start_time = strtotime($day_availability['start']);
+        $end_time = strtotime($day_availability['end']);
+        $total_slots = ($end_time - $start_time) / (60 * 60 * $slot_interval);
+        
+        // If we have more bookings than available slots, the day is fully occupied
+        return $booking_count >= $total_slots;
     }
 
     /**
@@ -276,6 +325,34 @@ class OccupiedSlotsSimpleBlocker
 
         // If there are events covering the entire day, consider it blocked
         return count($date_events) > 0;
+    }
+
+    /**
+     * Check if a date is fully occupied by Google Calendar events (new method)
+     */
+    private function is_date_fully_occupied_by_google_events($date, $event_count)
+    {
+        // Get business hours and slot configuration from Timetics settings
+        $timetics_settings = get_option('timetics_settings', []);
+        $availability = $timetics_settings['availability'] ?? [];
+        $slot_interval = $timetics_settings['slot_interval'] ?? 1;
+        
+        // Get the day of the week for this date
+        $day_of_week = date('D', strtotime($date));
+        
+        // Check if this day is available (not a day off)
+        if (!isset($availability[$day_of_week]) || empty($availability[$day_of_week])) {
+            return true; // Day is not available, so it's "fully occupied"
+        }
+        
+        // Calculate total available slots for this day
+        $day_availability = $availability[$day_of_week][0];
+        $start_time = strtotime($day_availability['start']);
+        $end_time = strtotime($day_availability['end']);
+        $total_slots = ($end_time - $start_time) / (60 * 60 * $slot_interval);
+        
+        // If we have more Google events than available slots, the day is fully occupied
+        return $event_count >= $total_slots;
     }
 
     /**
