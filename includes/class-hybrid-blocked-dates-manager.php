@@ -33,7 +33,7 @@ class Hybrid_Blocked_Dates_Manager {
     }
     
     /**
-     * Get blocked dates using hybrid approach
+     * Get blocked dates using hybrid approach with Google Calendar priority
      */
     public function get_blocked_dates($start_date, $end_date) {
         // Try cache first
@@ -42,16 +42,16 @@ class Hybrid_Blocked_Dates_Manager {
             return $cached_dates;
         }
         
-        // Build blocked dates from multiple sources
+        // Build blocked dates from multiple sources with proper priority
         $blocked_dates = [];
         
-        // 1. Timetics bookings (always real-time)
+        // 1. Google Calendar events (HIGHEST PRIORITY - blocks individual timeslots)
+        $google_blocked_dates = $this->get_google_calendar_blocked_dates_with_priority($start_date, $end_date);
+        $blocked_dates = array_merge($blocked_dates, $google_blocked_dates);
+        
+        // 2. Timetics bookings (only blocks if day is fully occupied)
         $timetics_dates = $this->get_timetics_blocked_dates($start_date, $end_date);
         $blocked_dates = array_merge($blocked_dates, $timetics_dates);
-        
-        // 2. Google Calendar events (with fallback)
-        $google_dates = $this->get_google_calendar_blocked_dates($start_date, $end_date);
-        $blocked_dates = array_merge($blocked_dates, $google_dates);
         
         // 3. Manual overrides (if any)
         $manual_dates = $this->get_manual_blocked_dates($start_date, $end_date);
@@ -112,7 +112,67 @@ class Hybrid_Blocked_Dates_Manager {
     }
     
     /**
-     * Get Google Calendar blocked dates (with smart caching)
+     * Get Google Calendar blocked dates with priority (blocks individual timeslots)
+     */
+    private function get_google_calendar_blocked_dates_with_priority($start_date, $end_date) {
+        // Check if Google Calendar integration is enabled
+        if (!function_exists('timetics_get_option') || !timetics_get_option('google_calendar_overlap', false)) {
+            return [];
+        }
+        
+        // Use cache for Google Calendar (less critical for real-time accuracy)
+        $cache_key = 'timetics_google_calendar_priority_' . md5($start_date . '_' . $end_date);
+        $cached_dates = get_transient($cache_key);
+        
+        if ($cached_dates !== false) {
+            return $cached_dates;
+        }
+        
+        $blocked_dates = [];
+        
+        try {
+            // Get Google Calendar events
+            $calendar = new \Timetics\Core\Integrations\Google\Service\Calendar();
+            $events = $calendar->get_events(get_current_user_id(), [
+                'timeMin' => rawurlencode(date('c', strtotime($start_date))),
+                'timeMax' => rawurlencode(date('c', strtotime($end_date))),
+            ]);
+            
+            if (!is_wp_error($events) && !empty($events)) {
+                // Group events by date and check timeslot conflicts
+                $dates_with_events = [];
+                foreach ($events as $event) {
+                    $event_date = $event['start_date'] ?? null;
+                    if ($event_date) {
+                        if (!isset($dates_with_events[$event_date])) {
+                            $dates_with_events[$event_date] = [];
+                        }
+                        $dates_with_events[$event_date][] = $event;
+                    }
+                }
+                
+                // Check each date for timeslot conflicts
+                foreach ($dates_with_events as $date => $date_events) {
+                    if ($this->has_google_calendar_timeslot_conflicts($date, $date_events)) {
+                        $blocked_dates[] = $date;
+                    }
+                }
+            }
+            
+            // Cache for 10 minutes (shorter than Timetics cache)
+            set_transient($cache_key, $blocked_dates, 10 * MINUTE_IN_SECONDS);
+            
+        } catch (Exception $e) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('Timetics Hybrid Manager: Google Calendar priority error - ' . $e->getMessage());
+            }
+        }
+        
+        return $blocked_dates;
+    }
+
+    /**
+     * Get Google Calendar blocked dates (with smart caching) - DEPRECATED
      */
     private function get_google_calendar_blocked_dates($start_date, $end_date) {
         // Check if Google Calendar integration is enabled
@@ -213,6 +273,57 @@ class Hybrid_Blocked_Dates_Manager {
     private function is_date_fully_occupied_by_google_events($date, $event_count) {
         // Use same logic as Timetics bookings
         return $this->is_date_fully_occupied($date, $event_count);
+    }
+
+    /**
+     * Check if Google Calendar events have timeslot conflicts (HIGH PRIORITY)
+     */
+    private function has_google_calendar_timeslot_conflicts($date, $events) {
+        // Get business hours and slot configuration
+        $timetics_settings = get_option('timetics_settings', []);
+        $availability = $timetics_settings['availability'] ?? [];
+        $slot_interval = $timetics_settings['slot_interval'] ?? 1;
+        
+        // Get the day of the week for this date
+        $day_of_week = date('D', strtotime($date));
+        
+        // Check if this day is available
+        if (!isset($availability[$day_of_week]) || empty($availability[$day_of_week])) {
+            return true; // Day is not available
+        }
+        
+        // Get business hours for this day
+        $day_availability = $availability[$day_of_week][0];
+        $start_time = strtotime($day_availability['start']);
+        $end_time = strtotime($day_availability['end']);
+        
+        // Generate all available timeslots for this day
+        $available_slots = [];
+        for ($time = $start_time; $time < $end_time; $time += (60 * 60 * $slot_interval)) {
+            $available_slots[] = $time;
+        }
+        
+        // Check if Google Calendar events conflict with any available slots
+        $conflicted_slots = 0;
+        foreach ($available_slots as $slot_time) {
+            $slot_end_time = $slot_time + (60 * 60 * $slot_interval);
+            
+            // Check if any Google Calendar event overlaps with this slot
+            foreach ($events as $event) {
+                $event_start = strtotime($event['start_time']);
+                $event_end = strtotime($event['end_time']);
+                
+                // If Google Calendar event overlaps with this slot, mark it as conflicted
+                if (($event_start < $slot_end_time) && ($event_end > $slot_time)) {
+                    $conflicted_slots++;
+                    break; // No need to check more events for this slot
+                }
+            }
+        }
+        
+        // If Google Calendar events conflict with any available slots, block the date
+        // This gives Google Calendar HIGHEST PRIORITY over Timetics bookings
+        return $conflicted_slots > 0;
     }
     
     /**
